@@ -1,0 +1,1684 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>엘든 링 NPC 이벤트 체크리스트</title>
+<style>
+  :root { color-scheme: dark; --background: #151712; --panel: #20231a; --text: #f2f1e5; --muted: #babdac; --gold: #e7c781; --line: #424536; }
+  * { box-sizing: border-box; }
+  body { background: var(--background); color: var(--text); margin: 0; font: 16px/1.65 system-ui, 'Malgun Gothic', sans-serif; }
+  main { width: min(100% - 2rem, 56rem); margin: 0 auto 4rem; }
+  header { padding: 2.75rem 0 1.6rem; border-bottom: 1px solid var(--line); }
+  h1, h2, p { margin: 0; }
+  h1 { font-size: clamp(1.75rem, 5vw, 2.55rem); font-weight: 720; line-height: 1.25; color: var(--gold); }
+  header p { margin-top: .75rem; color: var(--muted); max-width: 60ch; }
+  nav { display: flex; flex-wrap: wrap; gap: .6rem 1.2rem; margin-top: 1rem; }
+  a { color: var(--gold); text-underline-offset: .2em; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: .2rem; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: 1rem; }
+  .controls label { display: inline-flex; align-items: center; gap: .5rem; }
+  select { border: 1px solid var(--line); border-radius: .35rem; padding: .4rem .6rem; font: inherit; background: var(--panel); color: var(--text); }
+  section { margin-top: 2rem; }
+  h2 { font-size: 1.35rem; margin-bottom: .55rem; }
+  .region { border: 1px solid var(--line); border-radius: .55rem; margin: .5rem 0; background: var(--panel); overflow: hidden; }
+  summary { cursor: pointer; }
+  .region summary { display: flex; align-items: baseline; gap: .6rem; padding: .7rem .9rem; font-weight: 650; list-style: none; }
+  .region summary::-webkit-details-marker { display: none; }
+  .region summary::before { content: '▸'; color: var(--gold); }
+  .region[open] summary::before { content: '▾'; }
+  .number { margin-left: auto; white-space: nowrap; color: var(--muted); font-size: .86rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .region-content { border-top: 1px solid var(--line); padding: .8rem .9rem .35rem; }
+  .warning { border-left: .18rem solid var(--gold); padding: .15rem 0 .15rem .65rem; color: var(--gold); font-size: .94rem; }
+  .items { list-style: none; margin: .55rem 0 0; padding: 0; }
+  .items li + li { border-top: 1px solid var(--line); }
+  .item { display: flex; align-items: flex-start; gap: .65rem; padding: .65rem .1rem; cursor: pointer; }
+  .item input { margin: .35rem 0 0; inline-size: 1.04rem; block-size: 1.04rem; flex: none; accent-color: var(--gold); }
+  .item-body { min-width: 0; display: grid; gap: .08rem; }
+  .item-title { display: flex; gap: .4rem .55rem; flex-wrap: wrap; align-items: baseline; }
+  .location, .tag { color: var(--muted); font-size: .85rem; }
+  .tag.urgent { color: var(--gold); }
+  .action { font-size: .94rem; overflow-wrap: anywhere; }
+  .item input:checked + .item-body .item-title strong { color: var(--muted); }
+  .references { margin: .7rem .15rem 0; color: var(--muted); font-size: .88rem; }
+  .references p { margin-top: .4rem; }
+  .references ul { margin: .4rem 0 0; }
+  #save-notice:empty { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>엘든 링 NPC 이벤트 체크리스트</h1>
+    <p>지금 있는 지역만 펼치세요. 각 지역 첫 줄에서 먼저 확인할 진행 조건을 보고, NPC 이름 아래에서 만날 장소와 할 일을 확인할 수 있어요. 지역 이름은 목차에 보이고, 상세 경로와 분기 결과는 해당 구간을 펼치면 표시돼요.</p>
+    <p>첫 만남, 퀘스트, 놓치기 쉬운 대사·소환·침입을 기준으로 만든 문헌 대조용 동선이에요. 매번 새로운 대사가 나오는지 확인하고, 필요한 곳에서는 축복에서 쉬거나 빠르게 이동해 구역을 갱신하세요.</p>
+    <nav aria-label="구간 바로가기"><a href="#base">본편</a><a href="#dlc">황금 나무의 그림자</a><a href="#extras">부록</a><a href="#branches">선택 분기</a></nav>
+    <div class="controls"><label for="journey">진행 기록 <select id="journey"><option value="1">1회차</option><option value="2">2회차</option><option value="3">3회차</option><option value="4">4회차 이후</option></select></label><span id="save-notice" role="status"></span></div>
+  </header>
+  <section id="base" aria-labelledby="heading-base">
+    <h2 id="heading-base">본편</h2>
+    <details class="region" id="base-1">
+      <summary><span>림그레이브 서부와 호수</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">영마를 얻으면 첫 원탁 방문 전에 밤의 엘레의 교회부터 들르세요. 유라의 첫 대사는 흐린 강 침입 전에 챙기세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-1-1">
+            <span class="item-body"><span class="item-title"><strong>백면 바레</strong><span class="tag">대화</span></span>
+              <span class="location">인도의 시작</span>
+              <span class="action">처음 대화하고 조언을 끝까지 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-2">
+            <span class="item-body"><span class="item-title"><strong>칼레·멜리나·레나</strong><span class="tag">대화</span></span>
+              <span class="location">엘레의 교회 → 관문 앞 → 엘레의 교회</span>
+              <span class="action">칼레와 거래·대화. 관문 앞에서 멜리나의 거래를 수락해 영마를 얻은 뒤 밤에 교회로 빠른 이동해 레나의 첫 만남 보기. 축복 메뉴에 멜리나 대화가 뜨면 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-3">
+            <span class="item-body"><span class="item-title"><strong>보크</strong><span class="tag">진행</span></span>
+              <span class="location">아길 호수 북쪽 망원경 → 해안 동굴</span>
+              <span class="action">말을 거는 작은 나무에 구르거나 한 번 쳐서 의태를 풀기. 해안 동굴에서 보스 전 대화 → 우두머리 격파 → 재봉 바늘 전달.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-4">
+            <span class="item-body"><span class="item-title"><strong>유라</strong><span class="tag">대화</span></span>
+              <span class="location">아길 호수 남쪽 유적 아치</span>
+              <span class="action">흐린 강에 가기 전에 먼저 인사. 선택으로 아길에 한 번 패한 뒤 경고 대사, 아길 격파 뒤 반응도 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-5">
+            <span class="item-body"><span class="item-title"><strong>유라·네리우스</strong><span class="tag">침입·소환</span></span>
+              <span class="location">흐린 강 동굴 앞 → 북쪽 강가</span>
+              <span class="action">네리우스 침입 때 유라가 합류할 때까지 기다렸다가 격파하고, 북쪽에서 유라와 다시 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-6">
+            <span class="item-body"><span class="item-title"><strong>패치</strong><span class="tag">진행</span></span>
+              <span class="location">흐린 강 동굴</span>
+              <span class="action">전투에서 항복하면 공격을 멈추고 대화. 재방문해 상점과 새 상자 대사, 상자를 연 뒤 돌아와 반응 확인. 추가 제스처까지 보려면 아래 부록 참고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-7">
+            <span class="item-body"><span class="item-title"><strong>셀렌</strong><span class="tag">진행</span></span>
+              <span class="location">역참터 지하실</span>
+              <span class="action">지하실 보스 뒤 셀렌을 만나 제자가 되기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-1-8">
+            <span class="item-body"><span class="item-title"><strong>영혼 해파리 관련 묘비</strong><span class="tag">대화</span></span>
+              <span class="location">폭풍 언덕 동쪽 묘지</span>
+              <span class="action">쌍둥이 이름이 적힌 묘비를 읽기. 이어지는 이벤트는 거인들의 산령에 있어요.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-2">
+      <summary><span>림그레이브 동부와 폭풍 언덕</span><span class="number" aria-label="완료 항목 수" data-count>0 / 10</span></summary>
+      <div class="region-content">
+        <p class="warning">D의 길목 첫 대사를 들으려면 마중물 마을 보스를 잡기 전에 말을 거세요. 짐승의 신전 축복에서 첫 원탁 초대가 올 수 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-2-1">
+            <span class="item-body"><span class="item-title"><strong>멜리나</strong><span class="tag">대화</span></span>
+              <span class="location">제3 마리카 교회</span>
+              <span class="action">축복 메뉴의 대화 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-2">
+            <span class="item-body"><span class="item-title"><strong>케네스 하이트</strong><span class="tag">진행</span></span>
+              <span class="location">안개 낀 숲 북쪽 아치 → 하이트 요새</span>
+              <span class="action">의뢰를 받고 요새 정상의 기사를 쓰러뜨린 뒤 보고. 요새에서 다시 대화하고 스톰빌 후속을 기다리기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-3">
+            <span class="item-body"><span class="item-title"><strong>블라이드·칼레</strong><span class="tag">진행</span></span>
+              <span class="location">안개 낀 숲 폐허 → 엘레의 교회 → 폐허</span>
+              <span class="action">울음소리 듣기 → 칼레에게 물어 핑거스냅 받기 → 폐허에서 사용해 블라이드 부르기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-4">
+            <span class="item-body"><span class="item-title"><strong>블라이드</strong><span class="tag">침입·소환</span></span>
+              <span class="location">주인 잃은 사냥개의 봉인감옥</span>
+              <span class="action">블라이드와 대화한 뒤 봉인감옥 안에서 소환 가능. 대리윌 격파 뒤 바깥에서 다시 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-5">
+            <span class="item-body"><span class="item-title"><strong>D</strong><span class="tag urgent">마감</span></span>
+              <span class="location">성인 다리 동쪽 길목 → 마중물 마을</span>
+              <span class="action">길목에서 먼저 대화. 마을의 타비아의 배를 잡아 사근을 얻고, 마을 입구에서 다시 D에게 소개 받기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-6">
+            <span class="item-body"><span class="item-title"><strong>그랭</strong><span class="tag">진행</span></span>
+              <span class="location">제3 마리카 교회 뒤 전송문 → 짐승의 신전</span>
+              <span class="action">그랭과 대화해 사근을 전달. 신전만 방문하고 돌아와도 돼요. 사근 총 9개와 중간 반응은 부록에서 추적.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-7">
+            <span class="item-body"><span class="item-title"><strong>알렉산더</strong><span class="tag">진행</span></span>
+              <span class="location">성인 다리 남쪽 언덕 → 게르 갱도 후문</span>
+              <span class="action">언덕에서 말을 걸고 뒤쪽을 쳐서 꺼내 준 뒤 대화. 갱도 후문에서의 두 번째 대사는 라단 축제가 시작되기 전에 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-8">
+            <span class="item-body"><span class="item-title"><strong>로데리카</strong><span class="tag">진행</span></span>
+              <span class="location">폭풍 언덕의 낡은 집</span>
+              <span class="action">대사를 반복할 때까지 말 걸어 제스처와 영혼 해파리 뼛가루 받기. 번데기의 유품은 스톰빌에서 돌아와 전달.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-9">
+            <span class="item-body"><span class="item-title"><strong>베르나르</strong><span class="tag">대화</span></span>
+              <span class="location">전쟁 배움의 낡은 집</span>
+              <span class="action">처음 만나 질문에 답하고 상점 열기. 밤에 같은 오두막의 방울 사냥꾼을 만날 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-2-10">
+            <span class="item-body"><span class="item-title"><strong>배율자 헨릭스</strong><span class="tag">침입·소환</span></span>
+              <span class="location">폭풍 언덕 북쪽 투기장으로 가는 길</span>
+              <span class="action">초반에 필드 침입 만나기. 보스를 더 밀기 전에 이 길부터 들르는 편이 안전해요.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-3">
+      <summary><span>흐느낌의 반도</span><span class="number" aria-label="완료 항목 수" data-count>0 / 3</span></summary>
+      <div class="region-content">
+        <p class="warning">일레나의 편지는 몬 성 보스를 잡기 전에 전달하세요. 에드거와 싸우는 선택은 이후 침입 장면을 건너뜁니다.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-3-1">
+            <span class="item-body"><span class="item-title"><strong>일레나</strong><span class="tag">진행</span></span>
+              <span class="location">제물 이송 대교 남쪽</span>
+              <span class="action">말을 걸고 편지 전달을 맡기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-3-2">
+            <span class="item-body"><span class="item-title"><strong>에드거</strong><span class="tag">진행</span></span>
+              <span class="location">몬 성 누각 → 보스 앞 → 몬 성 누각 → 다리 남쪽</span>
+              <span class="action">편지 전달. 보스 앞에서 에드거 소환 가능. 격파 후 성에서 보고하고 일레나가 있던 곳으로 돌아가 다시 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-3-3">
+            <span class="item-body"><span class="item-title"><strong>멜리나</strong><span class="tag">대화</span></span>
+              <span class="location">순례교회</span>
+              <span class="action">축복의 멜리나 대화 듣기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-4">
+      <summary><span>첫 원탁과 스톰빌 성</span><span class="number" aria-label="완료 항목 수" data-count>0 / 10</span></summary>
+      <div class="region-content">
+        <p class="warning">고드릭 격파나 리에니에 축복 휴식 전에 로데리카에게 번데기의 유품을 전하세요. 엔샤는 백금 마을의 비부절을 얻기 전에 만나는 게 안전해요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-4-1">
+            <span class="item-body"><span class="item-title"><strong>로지에르</strong><span class="tag">침입·소환</span></span>
+              <span class="location">멀기트 안개문 앞</span>
+              <span class="action">로지에르의 협력 사인을 사용해 보기. 첫 원탁은 멀기트에게 한 번 도전한 뒤 축복에서도 열려요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-2">
+            <span class="item-body"><span class="item-title"><strong>기드온·엔샤·바레</strong><span class="tag">대화</span></span>
+              <span class="location">첫 원탁 → 인도의 시작</span>
+              <span class="action">기드온과 대화하고 원탁을 다시 불러온 뒤 서재 앞 엔샤에게 제스처 받기. 첫 큰 룬을 얻기 전 바레에게 원탁 방문 후 대사 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-3">
+            <span class="item-body"><span class="item-title"><strong>콜린·디아로스·휴그·D·쌍둥이 노파</strong><span class="tag">대화</span></span>
+              <span class="location">첫 원탁</span>
+              <span class="action">콜린에게 보이는 것을 답해 제스처 받기. 디아로스의 부탁, 휴그의 족쇄, 그랭을 만난 뒤 D의 새 대화, 쌍둥이 노파 상점 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-4">
+            <span class="item-body"><span class="item-title"><strong>피아</strong><span class="tag">대화</span></span>
+              <span class="location">첫 원탁의 휴그 옆 방</span>
+              <span class="action">안긴 뒤 비밀 대화가 나오면 듣기. 나중에 새로운 선택지가 추가되므로 원탁에 돌아올 때 재확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-5">
+            <span class="item-body"><span class="item-title"><strong>알베리히</strong><span class="tag">침입·소환</span></span>
+              <span class="location">원탁 발코니 아래</span>
+              <span class="action">발코니에서 내려가 NPC 침입 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-6">
+            <span class="item-body"><span class="item-title"><strong>고스토크</strong><span class="tag urgent">마감</span></span>
+              <span class="location">스톰빌 정문 옆 → 성 내부 → 보스방</span>
+              <span class="action">정문에서 대화하고 옆길 선택. 기사에게 갇히는 방을 지난 뒤 사다리 위 문턱을 밟고 아래층으로 돌아가 고스토크 훔쳐보기와 은혜의 모조품 챙기기. 보스 뒤 재대화. 생존시키기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-7">
+            <span class="item-body"><span class="item-title"><strong>로지에르</strong><span class="tag urgent">마감</span></span>
+              <span class="location">스톰빌 예배당과 성 지하</span>
+              <span class="action">예배당에서 첫 대화. 성 지하 깊은 곳에서 흔적과 특수 혈흔을 조사하고, 보스 격파 뒤 원탁에서 관련 대화 하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-8">
+            <span class="item-body"><span class="item-title"><strong>로데리카·휴그</strong><span class="tag urgent">마감</span></span>
+              <span class="location">스톰빌의 번데기의 유품 → 폭풍 언덕 → 원탁</span>
+              <span class="action">유품을 고드릭 전에 오두막의 로데리카에게 전하기. 원탁에서 로데리카와 휴그 사이를 오가며 대화하고, 휴식 뒤 영체 조율 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-9">
+            <span class="item-body"><span class="item-title"><strong>네펠리 루</strong><span class="tag">침입·소환</span></span>
+              <span class="location">고드릭 방 앞 옆방과 안개문 앞</span>
+              <span class="action">네펠리와 먼저 대화하고 협력 사인 사용 가능. 보스 격파 뒤 원탁에서 새 대사 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-4-10">
+            <span class="item-body"><span class="item-title"><strong>엔야·기드온·바레</strong><span class="tag">대화</span></span>
+              <span class="location">첫 큰 룬 뒤 원탁 → 인도의 시작</span>
+              <span class="action">두 손가락 방에서 엔야, 서재의 기드온, 원탁의 네펠리와 대화. 바레가 떠났다면 인도의 시작에 남긴 메시지를 읽기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-5">
+      <summary><span>리에니에 남부와 학원</span><span class="number" aria-label="완료 항목 수" data-count>0 / 9</span></summary>
+      <div class="region-content">
+        <p class="warning">로지에르의 조사를 끝내기 전에 라니에게 바로 합류하지 마세요. 라야의 목걸이 부탁은 알터 고원에 오르기 전에 해결하세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-5-1">
+            <span class="item-body"><span class="item-title"><strong>토푸스</strong><span class="tag">진행</span></span>
+              <span class="location">이리스 교회 → 레아 루카리아</span>
+              <span class="action">교회에서 처음 대화. 학원 열쇠는 여분을 얻어 전달하고 제스처 받기. 학원 배움터의 방 근처에서 마지막 위치 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-2">
+            <span class="item-body"><span class="item-title"><strong>하이타</strong><span class="tag">진행</span></span>
+              <span class="location">호수를 향한 절벽 → 정화된 폐허 → 문 앞 마을 다리</span>
+              <span class="action">스톰빌 뒤쪽에서 첫 포도를 챙겨 첫 만남 진행. 정화된 폐허의 지하실과 에드거의 침입에서 나머지 보통 포도를 얻어 순서대로 전달. 다리에서 질문에 답한 뒤 축복으로 갱신하고 재대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-3">
+            <span class="item-body"><span class="item-title"><strong>라야·불량배</strong><span class="tag">진행</span></span>
+              <span class="location">리에니에 남부 망원경 주변 → 새우 삶는 오두막</span>
+              <span class="action">라야의 부탁을 받고 불량배에게 목걸이를 사서 돌려주기. 불량배에게 새우까지 사면 도읍 해자 후속이 열려요. 살려두는 분기는 분기표 참고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-4">
+            <span class="item-body"><span class="item-title"><strong>패치</strong><span class="tag">대화</span></span>
+              <span class="location">조망섬</span>
+              <span class="action">납치 인형과 라야에 관한 대화 듣기. 인형을 이용한 이동은 선택이고, 화산관 첫 만남은 라야의 안내로 보는 쪽이 자연스러워요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-5">
+            <span class="item-body"><span class="item-title"><strong>디아로스</strong><span class="tag">진행</span></span>
+              <span class="location">학원 문 앞 마을 북쪽 물가 → 원탁</span>
+              <span class="action">물가에서 만난 뒤 원탁에서 새 대사 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-6">
+            <span class="item-body"><span class="item-title"><strong>유라</strong><span class="tag">진행</span></span>
+              <span class="location">레아 루카리아 정문 축복 북쪽 다리</span>
+              <span class="action">봉인 너머 다리의 붉은 사인으로 유라를 돕고, 원래 세계로 돌아와 다리에서 재대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-7">
+            <span class="item-body"><span class="item-title"><strong>백면 바레</strong><span class="tag">진행</span></span>
+              <span class="location">장미 교회</span>
+              <span class="action">두 손가락에 관한 질문에 의심을 표현해서 다음 시험 열기. 온라인 침입 3번 또는 알터 고원의 오프라인 사인 1회 중 선택할 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-8">
+            <span class="item-body"><span class="item-title"><strong>에드거</strong><span class="tag">침입·소환</span></span>
+              <span class="location">복수자의 오두막</span>
+              <span class="action">몬 성과 제물 이송 대교 단계 뒤 오두막에서 NPC 침입 진행. 하이타용 포도 회수.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-5-9">
+            <span class="item-body"><span class="item-title"><strong>레날라·보크</strong><span class="tag">대화</span></span>
+              <span class="location">학원 대서고 / 호수를 향한 절벽 등</span>
+              <span class="action">학원 보스 뒤 레날라의 재탄생 대화 확인. 보크가 등장한 축복에서 대화하고 의상 조정 열기. 보크 분기 전에 후반 구간 참고.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-6">
+      <summary><span>리에니에 백금 마을·맹세의 교회·북부</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">엔샤의 첫 제스처를 받은 뒤 백금 마을로 가세요. 라티나는 나중에 비부절의 나머지 쪽을 얻기 전에 합류시켜야 해요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-6-1">
+            <span class="item-body"><span class="item-title"><strong>네펠리·알버스</strong><span class="tag">진행</span></span>
+              <span class="location">백금 마을</span>
+              <span class="action">네펠리와 먼저 대화. 빛나는 항아리 의태를 가볍게 풀어 알버스에게 비부절을 받고, 마을 보스 격파.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-2">
+            <span class="item-body"><span class="item-title"><strong>엔샤·기드온</strong><span class="tag">침입·소환</span></span>
+              <span class="location">비부절을 얻은 뒤 원탁</span>
+              <span class="action">엔샤 이벤트 진행. 서재에서 엔샤와 비부절 관련 새 대화 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-3">
+            <span class="item-body"><span class="item-title"><strong>라티나</strong><span class="tag">진행</span></span>
+              <span class="location">호수 옆 결정 동굴 → 늑대가 잠든 오두막</span>
+              <span class="action">알버스의 비부절을 보여 주고 부탁을 듣고 합류시키기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-4">
+            <span class="item-body"><span class="item-title"><strong>네펠리</strong><span class="tag">진행</span></span>
+              <span class="location">원탁 아래층 ↔ 기드온의 서재</span>
+              <span class="action">두 사람 사이를 오가며 대화. 사종루의 ‘왕을 기다리는 절벽’ 전송문에서 폭풍 매의 옛 왕을 가져와 전달. 셀브스의 정약은 분기표 참고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-5">
+            <span class="item-body"><span class="item-title"><strong>미리엘·보크</strong><span class="tag">대화</span></span>
+              <span class="location">맹세의 교회 → 보크가 있는 축복</span>
+              <span class="action">미리엘에게 레날라·라다곤 이야기를 듣고 금 재봉 바늘을 챙기기. 보크의 특수 의상 대화는 조정 가능한 데미갓 의상을 갖고 있을 때 진행.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-6">
+            <span class="item-body"><span class="item-title"><strong>피아·로지에르</strong><span class="tag">진행</span></span>
+              <span class="location">원탁 → 검은 칼날의 지하 묘지 → 원탁</span>
+              <span class="action">스톰빌 혈흔에 대해 로지에르에게 말하고 피아의 비밀 대화를 듣기. 묘지 숨은 보스의 검은 칼날 각인을 로지에르에게 맡기고, 축복으로 갱신해 조사 결과와 부탁 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-7">
+            <span class="item-body"><span class="item-title"><strong>바이크·하이타</strong><span class="tag">침입·소환</span></span>
+              <span class="location">진정의 교회 → 벨룸 교회</span>
+              <span class="action">바이크 침입의 지문 포도를 벨룸 교회의 하이타에게 주기. 남은 하이타 단계는 도읍 지하에서 결정.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-6-8">
+            <span class="item-body"><span class="item-title"><strong>보크·멜리나</strong><span class="tag">대화</span></span>
+              <span class="location">동쪽 레아 루카리아 문 축복</span>
+              <span class="action">보크가 이곳으로 이동했을 때 새 대화를 확인하고 축복에서 멜리나의 보크 관련 이야기가 뜨는지 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-7">
+      <summary><span>카리아 성관·시프라 강·축제 준비</span><span class="number" aria-label="완료 항목 수" data-count>0 / 7</span></summary>
+      <div class="region-content">
+        <p class="warning">게르 갱도의 알렉산더는 시프라 강의 블라이드에게 조사 결과를 보고하거나 알터 고원으로 넘어가기 전에 보는 게 안전해요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-7-1">
+            <span class="item-body"><span class="item-title"><strong>이지</strong><span class="tag">진행</span></span>
+              <span class="location">성관으로 가는 길</span>
+              <span class="action">블라이드가 소개했다는 대사와 이지의 첫 대화 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-2">
+            <span class="item-body"><span class="item-title"><strong>라니·로지에르</strong><span class="tag urgent">마감</span></span>
+              <span class="location">라니의 마술사탑 ↔ 원탁</span>
+              <span class="action">로지에르의 조사 부탁을 받고 라니에게 처음 질문. 원탁에 돌아가 로지에르의 안내를 들은 뒤 다시 라니에게 가서 합류. 탑 아래층의 블라이드·이지·셀브스와 대화하고 라니에게 인사.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-3">
+            <span class="item-body"><span class="item-title"><strong>셀브스</strong><span class="tag">진행</span></span>
+              <span class="location">셀브스의 마술사탑 → 세 자매의 숨은 지하실</span>
+              <span class="action">정약을 받고 지하실의 메시지를 조사. 첫 회차에 이어지는 NPC를 최대한 보려면 기드온에게 맡기기. 셀브스에게 돌아가 인형 대화와 추가 구입을 열기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-4">
+            <span class="item-body"><span class="item-title"><strong>피디아</strong><span class="tag">대화</span></span>
+              <span class="location">세 자매 절벽 아래, 성관 하층 위쪽 발코니</span>
+              <span class="action">지붕을 타고 내려가 말 걸기. 라니에게 노크론 물건을 넘기기 전에 이 방문을 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-5">
+            <span class="item-body"><span class="item-title"><strong>블라이드·셀브스·셀렌</strong><span class="tag">진행</span></span>
+              <span class="location">시프라 강 강가 → 셀브스의 탑 → 역참터 → 시프라 강</span>
+              <span class="action">블라이드에게 조사 상황을 듣고, 셀브스의 소개장을 받아 셀렌에게 질문한 뒤 블라이드에게 보고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-6">
+            <span class="item-body"><span class="item-title"><strong>큰 항아리</strong><span class="tag">침입·소환</span></span>
+              <span class="location">시프라 강 안쪽 우물 승강기 → 케일리드 투기장 앞</span>
+              <span class="action">지상으로 올라가 큰 항아리에게 말을 걸고 나타난 붉은 사인 세 개를 차례로 진행. 모두 이긴 뒤 다시 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-7-7">
+            <span class="item-body"><span class="item-title"><strong>로지에르</strong><span class="tag">대화</span></span>
+              <span class="location">라니 합류 뒤 원탁</span>
+              <span class="action">라니에 대한 보고와 D 관련 대화를 확인. 축복이나 재방문으로 상태가 바뀔 때마다 말을 걸고, 마지막에 편지도 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-8">
+      <summary><span>케일리드 남부와 라단 축제</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">축제에서는 광장과 전투 후 사막에서 각각 NPC 대화가 있어요. 바레와 이름 없는 백면 침입을 챙기려면 모그윈 왕조 보스를 잡기 전 확인하세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-8-1">
+            <span class="item-body"><span class="item-title"><strong>아나스타시아</strong><span class="tag">침입·소환</span></span>
+              <span class="location">림그레이브와 케일리드 경계의 불붙은 교회</span>
+              <span class="action">첫 NPC 침입 확인. 후속은 겔미어 화산과 구별된 설원.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-2">
+            <span class="item-body"><span class="item-title"><strong>고리·밀리센트</strong><span class="tag">진행</span></span>
+              <span class="location">고리의 오두막 → 에오니아 늪 → 부패병의 교회 → 오두막</span>
+              <span class="action">고리에게 의뢰 받기. 오닐을 쓰러뜨려 금의 침을 회수하고 고리에게 맡긴 뒤 지역을 갱신. 수리된 침을 교회의 밀리센트에게 주고 다시 말 걸기. 오두막에서 밀리센트와 고리를 차례로 재확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-3">
+            <span class="item-body"><span class="item-title"><strong>밀리센트</strong><span class="tag">침입·소환</span></span>
+              <span class="location">에오니아 늪 남쪽의 깊은 부패 지대</span>
+              <span class="action">침을 주기 전 늪의 NPC 침입도 보려면 먼저 방문하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-4">
+            <span class="item-body"><span class="item-title"><strong>블라이드·알렉산더·제렌·손가락 무녀</strong><span class="tag">대화</span></span>
+              <span class="location">적사자성 광장</span>
+              <span class="action">축제 시작 전에 광장의 NPC들을 만나 제스처와 대화 챙기기. 제렌에 말을 걸어 축제 개시.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-5">
+            <span class="item-body"><span class="item-title"><strong>축제 전투 참가자</strong><span class="tag">침입·소환</span></span>
+              <span class="location">라단 보스전 모래사장</span>
+              <span class="action">협력 사인으로 블라이드, 알렉산더, 오키나, 라이오넬, 트라고스, 패치, 테롤리나 등을 만나기. 트라고스의 인사는 화산관 의뢰 전에 챙겨 두기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-6">
+            <span class="item-body"><span class="item-title"><strong>알렉산더·블라이드·제렌</strong><span class="tag urgent">마감</span></span>
+              <span class="location">라단 격파 후 축복 주변 → 적사자성 예배당</span>
+              <span class="action">사막에서 알렉산더와 블라이드 각각 대화. 성으로 돌아가 제렌의 작별 인사를 들어 셀렌 후속을 열기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-7">
+            <span class="item-body"><span class="item-title"><strong>블라이드·이지</strong><span class="tag">대화</span></span>
+              <span class="location">라단 축제 뒤, 림그레이브 봉인감옥 → 성관으로 가는 길</span>
+              <span class="action">이지와 대화하고 주인 잃은 사냥개의 봉인감옥에서 울음과 블라이드의 대사를 확인. 풀어준 뒤 이지에게 돌아가 설명 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-8-8">
+            <span class="item-body"><span class="item-title"><strong>기사 레온티엘</strong><span class="tag">추가 팩</span></span>
+              <span class="location">라단 축제 전투 → 라단 격파 후 사막 북쪽</span>
+              <span class="action">빛바랜 자 팩 보유 시 전투 중 협력 사인 확인. 격파 후 북쪽 전쟁사자들의 지하 묘지 방향에서 별도 침입 보기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-9">
+      <summary><span>노크론·항아리 마을</span><span class="number" aria-label="완료 항목 수" data-count>0 / 4</span></summary>
+      <div class="region-content">
+        <p class="warning">노크론의 칼날을 라니에게 건네면 셀브스의 진행이 닫혀요. 알터·로데일 단계가 필요한 정약 분기를 고르면 칼날 전달도 뒤로 미루세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-9-1">
+            <span class="item-body"><span class="item-title"><strong>라니·셀브스</strong><span class="tag">진행</span></span>
+              <span class="location">노크론 밤의 성역 → 셀브스의 탑</span>
+              <span class="action">노크론에서 칼날을 확보하되 일단 보관. 셀브스의 인형 상점과 계획을 열어 두고, 아래 알터 구간의 호박색 별빛 단계까지 진행한 뒤 라니에게 돌아오기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-9-2">
+            <span class="item-body"><span class="item-title"><strong>피아·D</strong><span class="tag">진행</span></span>
+              <span class="location">원탁</span>
+              <span class="action">피아에게 안겨 부탁을 받고 단검을 D에게 건네기. 갱신 뒤 열린 방에서 피아와 대화하고 쌍생아 세트를 보관.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-9-3">
+            <span class="item-body"><span class="item-title"><strong>D의 동생</strong><span class="tag">진행</span></span>
+              <span class="location">노크론 시프라 수도교, 쌍둥이 보스 앞</span>
+              <span class="action">한 번 말을 걸고 제스처 챙기기. 피아 후속 이벤트를 더 보려면 쌍생아 세트 전달.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-9-4">
+            <span class="item-body"><span class="item-title"><strong>알렉산더·항아리 아이</strong><span class="tag urgent">마감</span></span>
+              <span class="location">카리아 서원 남쪽 절벽 → 항아리 마을</span>
+              <span class="action">절벽에서 끼인 알렉산더에게 기름 항아리를 쓰고 뒤를 쳐서 꺼내기. 마을에서 항아리 아이와 대화하고 갱신할 때마다 꽃·알렉산더·밀렵꾼 대사 듣기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-10">
+      <summary><span>알터 고원·겔미어 화산·화산관 첫 방문</span><span class="number" aria-label="완료 항목 수" data-count>0 / 17</span></summary>
+      <div class="region-content">
+        <p class="warning">화산관의 라이커드는 산령에서 타니스의 세 번째 의뢰까지 마치고 나서 잡으세요. 패치·베르나르 의뢰도 별도예요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-10-1">
+            <span class="item-body"><span class="item-title"><strong>셀브스</strong><span class="tag urgent">마감</span></span>
+              <span class="location">알터 가도 세갈래 길 북동쪽 골짜기 → 셀브스의 탑</span>
+              <span class="action">호박색 별빛을 찾고 셀브스에게 주어 보상을 얻기. 갱신 후 추가 대화. 1회차 보존 경로에서는 라니에게 호박색 정약 투여를 보류. 대변 먹는 자 인형을 택하는 회차에는 그 정약 단계가 끝날 때까지 노크론의 칼날도 계속 보관.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-2">
+            <span class="item-body"><span class="item-title"><strong>라야·타니스</strong><span class="tag">진행</span></span>
+              <span class="location">덱타스 대승강기 위 또는 룩스 폐허 → 화산관</span>
+              <span class="action">리에니에에서 목걸이를 돌려준 뒤 알터에서 라야의 안내를 받아 이동. 타니스에게 가입하고 객실 열쇠를 받아 손님방 NPC들을 모두 만나기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-3">
+            <span class="item-body"><span class="item-title"><strong>콜린·금가면</strong><span class="tag">진행</span></span>
+              <span class="location">원탁 → 알터 가도 → 풍차 마을 남쪽 끊어진 다리</span>
+              <span class="action">콜린의 출발 대사를 듣고 알터 지도 비석 북쪽에서 재회. 다리의 금가면을 찾고 콜린에게 위치를 알린 뒤 둘이 함께 있는 곳에서 재대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-4">
+            <span class="item-body"><span class="item-title"><strong>밀리센트</strong><span class="tag">진행</span></span>
+              <span class="location">황금 나무를 향한 언덕 → 그늘성 → 풍차 마을 꼭대기</span>
+              <span class="action">언덕에서 인사하고 그늘성에서 의수를 가져와 전달. 도미눌라 보스 격파 후 꼭대기 축복에서 대화. 보스 소환 사인도 의수를 준 뒤 확인 가능.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-5">
+            <span class="item-body"><span class="item-title"><strong>고리</strong><span class="tag">대화</span></span>
+              <span class="location">밀리센트에게 의수를 준 뒤 고리의 오두막</span>
+              <span class="action">새 주문을 구입하고 밀리센트·말레니아 관련 대화를 열어 제스처 받기. 밀리센트 최종 분기 전에 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-6">
+            <span class="item-body"><span class="item-title"><strong>바레·마그누스</strong><span class="tag">진행</span></span>
+              <span class="location">피가 꿈틀거리는 폐허 → 장미 교회</span>
+              <span class="action">오프라인이면 폐허의 붉은 사인에서 마그누스를 침입해 격파. 바레의 천은 진정의 교회나 왕을 기다리는 예배당의 무녀에게서 물들이고 돌아가 대화. 다른 퀘스트의 살아 있는 무녀를 공격할 필요는 없어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-7">
+            <span class="item-body"><span class="item-title"><strong>유라·엘레오노라</strong><span class="tag urgent">마감</span></span>
+              <span class="location">제2 마리카 교회</span>
+              <span class="action">학원 정문의 유라를 도운 뒤 교회에서 유라를 만나고 엘레오노라 침입을 진행. 산령으로 가기 전에 유라의 교회 대사를 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-8">
+            <span class="item-body"><span class="item-title"><strong>보크</strong><span class="tag">대화</span></span>
+              <span class="location">알터 가도 세갈래 길 축복</span>
+              <span class="action">보크가 이곳에 나타나면 말 걸기. 동쪽 레아 루카리아 문 쪽에서 보크를 만날 때 축복에 멜리나의 보크 관련 대사가 뜨는지도 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-9">
+            <span class="item-body"><span class="item-title"><strong>멜리나</strong><span class="tag">대화</span></span>
+              <span class="location">알터 고원·외곽 전장터·작은 황금 나무 교회</span>
+              <span class="action">축복 대화 확인. 작은 황금 나무 교회에서는 제스처도 받을 수 있으니 도읍 진입 전에 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-10">
+            <span class="item-body"><span class="item-title"><strong>패치</strong><span class="tag">대화</span></span>
+              <span class="location">겔미어 화산 첫 번째 캠프 근처 절벽</span>
+              <span class="action">무지갯빛 돌 표시를 따라가 절벽 이벤트를 보고 다시 올라와 패치와 대화. 화산관에서 그를 진행하기 전에 들르는 편이 안전해요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-11">
+            <span class="item-body"><span class="item-title"><strong>아나스타시아·알렉산더</strong><span class="tag">침입·소환</span></span>
+              <span class="location">시체 악취 오두막 / 끓는 강 종단 너머 용암지대</span>
+              <span class="action">아나스타시아의 두 번째 침입. 용암 속 알렉산더는 인근 토룡 전투 뒤 만나 대사를 끝까지 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-12">
+            <span class="item-body"><span class="item-title"><strong>타니스·패치·베르나르</strong><span class="tag">진행</span></span>
+              <span class="location">화산관 → 의뢰 사인</span>
+              <span class="action">타니스의 이슈트반 → 라일리 → 유노 호슬로 의뢰마다 보고. 첫 의뢰 뒤 패치의 트라고스 의뢰를 받고, 완료 뒤 패치에게 보고하고 갱신한 다음 보상을 직접 묻기. 두 번째 뒤 베르나르의 로데일 합동 의뢰까지 받기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-13">
+            <span class="item-body"><span class="item-title"><strong>라야·타니스</strong><span class="tag">진행</span></span>
+              <span class="location">객실 → 숨은 통로 → 에이그레이 성당 이후</span>
+              <span class="action">의뢰 사이마다 라야의 대화와 옆방 재회를 확인하고 타니스에게 이야기. 지하 구역의 뱀의 양막을 라야에게 건네고 타니스의 비약을 받을 수 있어요. 숨은 방에서 라야와 대화 후 선택은 보류 가능.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-14">
+            <span class="item-body"><span class="item-title"><strong>디아로스·항아리 아이</strong><span class="tag">진행</span></span>
+              <span class="location">화산관 → 항아리 마을</span>
+              <span class="action">화산관에서 디아로스의 대사를 여러 번 보고, 떠나면 항아리 마을에서 항아리 아이와 함께 대화. 휴식과 시간 경과를 섞어 후속 장면을 확인하고 디아로스의 마지막 질문에 답하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-15">
+            <span class="item-body"><span class="item-title"><strong>기자·이슈트반·라일리·트라고스</strong><span class="tag">침입·소환</span></span>
+              <span class="location">화산관 위층 및 편지가 가리키는 현장</span>
+              <span class="action">화산관 위층의 기자 침입도 확인. 트라고스 제스처를 원한다면 의뢰를 수행하기 전에 먼저 협력자로 소환하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-16">
+            <span class="item-body"><span class="item-title"><strong>셀렌·아줄·루사트·제렌</strong><span class="tag">진행</span></span>
+              <span class="location">은자의 마을 너머 → 역참터 → 사리아의 은신 동굴 → 마녀 봉인의 폐허</span>
+              <span class="action">아줄에게서 마술을 받고 셀렌에게 보여 주기. 셀렌의 봉인 해제 아이템으로 루사트를 찾아 보고. 마녀 봉인의 폐허에서 셀렌의 원휘석을 받은 뒤, 갱신해 제렌의 방문 대사도 듣기. 세 자매의 숨은 지하실에서 안쪽 숨은 벽 너머 인형에 원휘석을 옮기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-10-17">
+            <span class="item-body"><span class="item-title"><strong>셀렌·제렌</strong><span class="tag">분기</span></span>
+              <span class="location">레아 루카리아 대서고 입구</span>
+              <span class="action">두 소환 사인 중 하나를 선택. 셀렌 쪽은 전투 후 대서고에서 대화하고 갱신 뒤 다시 방문. 제렌 쪽은 전투 후 대서고 바깥에서 대화.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-11">
+      <summary><span>라니·피아의 지하 후속</span><span class="number" aria-label="완료 항목 수" data-count>0 / 4</span></summary>
+      <div class="region-content">
+        <p class="warning">셀브스의 정약·피디아·호박색 별빛 단계를 마친 뒤 진행하세요. 정약을 대변 먹는 자에게 줄 회차라면 도읍 지하에서 먼저 그 분기를 마치세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-11-1">
+            <span class="item-body"><span class="item-title"><strong>라니·피디아</strong><span class="tag">진행</span></span>
+              <span class="location">라니의 탑 → 피디아의 발코니 → 카리아 서원</span>
+              <span class="action">칼날을 전달하고 피디아 위치에서 후속 장면 확인. 라니에게 받은 물건으로 서원을 전환. 원래 모습과 전환된 서원 양쪽에서 미리암을 만나고 신수탑의 죽음의 주흔 회수.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-11-2">
+            <span class="item-body"><span class="item-title"><strong>라니</strong><span class="tag">진행</span></span>
+              <span class="location">레나의 탑 → 에인세르 강 본류·녹스텔라 → 대서고 → 월광의 제단</span>
+              <span class="action">전송문 뒤 작은 라니를 줍고 축복에서 세 번 말을 걸기. 녹스텔라의 지하 축복에서도 새 대화 확인. 라니가 지목한 전투 뒤 받은 열쇠로 대서고의 레날라 옆 상자 열기. 부패한 호수 → 대회랑의 관 → 아스테르를 거쳐 월광의 제단 대교회에서 라니를 다시 만나기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-11-3">
+            <span class="item-body"><span class="item-title"><strong>라니·블라이드·이지</strong><span class="tag">대화</span></span>
+              <span class="location">라니의 방 축복 → 라니의 탑 입구 → 이지</span>
+              <span class="action">라니의 방에서 마지막 축복 대화를 듣고 탑 입구와 이지의 후일담을 차례로 확인. 이지에게 블라이드 소식을 전한 뒤 한 번 더 돌아오기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-11-4">
+            <span class="item-body"><span class="item-title"><strong>피아</strong><span class="tag">진행</span></span>
+              <span class="location">깊은 뿌리 밑바닥</span>
+              <span class="action">피아의 영웅들과 싸운 뒤 대화를 이어가고 죽음의 주흔 전달. 갱신하며 대화와 꿈의 이벤트 진행. D의 동생에게 갑옷을 줬다면 이후 다시 와서 후속 대화와 보상 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-12">
+      <summary><span>도읍 로데일과 지하</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">콜린·금가면의 도읍 단계, 베르나르의 의뢰, 도읍의 모판의 저주를 먼저 챙기세요. 엔딩을 열어 두려면 지하 최심부 문은 선택할 때까지 보류하세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-12-1">
+            <span class="item-body"><span class="item-title"><strong>콜린·금가면</strong><span class="tag">진행</span></span>
+              <span class="location">투기장 앞 언덕 → 황금 나무의 대성당 근처 석상 → 두 사람</span>
+              <span class="action">콜린과 대화. 황금률 원론을 기도 교사에게 주고 회귀성원리를 배워 석상 앞 메시지 위치에서 사용. 지력 37이 필요해요. 새 메시지를 읽고 금가면에게 보고한 뒤 콜린 대사 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-2">
+            <span class="item-body"><span class="item-title"><strong>귀족 침입자 The Noble Broken Mask</strong><span class="tag">추가 팩</span></span>
+              <span class="location">위 석상 아래의 회귀성원리 메시지</span>
+              <span class="action">빛바랜 자 팩 보유 시 회귀성원리 사용 직후 침입 여부를 확인하고, 금가면에게 결과를 보고하기 전에 이벤트를 마치기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-3">
+            <span class="item-body"><span class="item-title"><strong>베르나르·바르글룸·빌헬름</strong><span class="tag">진행</span></span>
+              <span class="location">도읍 성관 1층의 붉은 사인 → 화산관</span>
+              <span class="action">베르나르의 편지를 받은 뒤 두 상대와 싸우고 베르나르에게 보고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-4">
+            <span class="item-body"><span class="item-title"><strong>대변 먹는 자·불량배·로데리카</strong><span class="tag">진행</span></span>
+              <span class="location">원탁 → 도읍 지하 감옥 → 바깥 해자 → 원탁</span>
+              <span class="action">모판의 저주 하나를 원탁에서 보여 주고 열쇠 받기. 지하 감옥을 열어 내보낸 뒤 원탁 메시지와 로데리카의 관련 대화 확인. 새우를 산 경로에서는 해자 불량배와 대화·갱신하고 침입을 진행. 원탁을 거쳐 다시 감옥으로.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-5">
+            <span class="item-body"><span class="item-title"><strong>대변 먹는 자</strong><span class="tag">분기</span></span>
+              <span class="location">도읍 지하 감옥</span>
+              <span class="action">본인 후속을 보려면 모판의 저주 총 5개를 건네기. 인형 분기라면 이 시점에 셀브스의 정약 전달. 1회차 보존 경로에서는 기드온이 정약을 처리한 상태로 저주를 전달하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-6">
+            <span class="item-body"><span class="item-title"><strong>보크</strong><span class="tag">분기</span></span>
+              <span class="location">도읍 동쪽 성벽 축복</span>
+              <span class="action">요청을 듣기. 은자의 마을에서 얻는 ‘너는 아름다워’ 말을 앞에서 쓰고 대화하는 경로를 권장. 물방울 유생을 주는 별도 장면은 다른 회차에서 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-7">
+            <span class="item-body"><span class="item-title"><strong>멜리나·모르고트·기드온</strong><span class="tag">대화</span></span>
+              <span class="location">도읍 내부와 왕좌 → 원탁</span>
+              <span class="action">도읍 전투 전 멜리나의 협력 사인을 확인. 전투 뒤 보스와 상호작용 가능한 대사, 왕좌 뒤 문, 축복에서 멜리나의 다음 안내, 원탁 기드온의 대화를 차례로 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-12-8">
+            <span class="item-body"><span class="item-title"><strong>하이타·멜리나</strong><span class="tag">분기</span></span>
+              <span class="location">지하 최심부, 흉조의 아이 모그 뒤 숨은 통로</span>
+              <span class="action">문 앞까지 내려가 하이타와 대화. 근처 축복에서 멜리나의 경고가 나오면 듣기. 문을 여는 행동은 후속 장면과 엔딩 선택에 영향을 주니 보고 싶은 회차에 진행.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-13">
+      <summary><span>산령·화산관 마무리</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">거인의 불가마에서 멜리나에게 답하기 전에 산령의 멜리나 대사를 챙기세요. 마지막 화산관 의뢰까지 보고한 뒤 라이커드로 가세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-13-1">
+            <span class="item-body"><span class="item-title"><strong>샤브리리</strong><span class="tag">대화</span></span>
+              <span class="location">자미엘의 폐허</span>
+              <span class="action">첫 축복 근처 인물과 대화하고 선택은 보류. 다른 결말을 선택한 경우 등장과 소환 장면이 달라요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-2">
+            <span class="item-body"><span class="item-title"><strong>밀리센트·콜린·금가면</strong><span class="tag">진행</span></span>
+              <span class="location">옛 유적의 설곡 축복과 위쪽 다리</span>
+              <span class="action">설곡의 밀리센트 대화. 위쪽 다리에서 콜린·금가면을 찾아 도읍 이후 대사까지 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-3">
+            <span class="item-body"><span class="item-title"><strong>오키나·알렉산더</strong><span class="tag">침입·소환</span></span>
+              <span class="location">안식 교회 → 불의 거인 안개문 안</span>
+              <span class="action">오키나 침입을 확인하고, 겔미어에서 대화한 알렉산더의 불의 거인 협력 사인 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-4">
+            <span class="item-body"><span class="item-title"><strong>멜리나·영혼 해파리</strong><span class="tag">대화</span></span>
+              <span class="location">제1 마리카 교회 / 별 보는 폐허</span>
+              <span class="action">교회의 축복 대화. 폐허에서 영혼 해파리 영체를 소환해 자매 이벤트 보기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-5">
+            <span class="item-body"><span class="item-title"><strong>라티나</strong><span class="tag">진행</span></span>
+              <span class="location">소르 성채 → 로르드 대승강기 → 구별된 설원</span>
+              <span class="action">리에니에에서 합류시켰는지 먼저 확인한 뒤 소르 성채에서 비부절 나머지를 얻기. 대승강기의 동작을 전환해 설원 진입.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-6">
+            <span class="item-body"><span class="item-title"><strong>타니스·베르나르·패치·라야</strong><span class="tag">진행</span></span>
+              <span class="location">산령의 유노 호슬로 사인 → 화산관</span>
+              <span class="action">유노를 침입해 최종 의뢰 보고. 패치·베르나르 보상까지 확인한 후 라이커드 격파. 돌아와 화산관 인물들의 출발 대사와 라야의 남은 분기 진행.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-7">
+            <span class="item-body"><span class="item-title"><strong>라야·타니스</strong><span class="tag">분기</span></span>
+              <span class="location">에이그레이 성당 이후 숨은 방 → 라이커드 전투 장소</span>
+              <span class="action">라야에게 비약을 주거나, 보류한 채 라이커드 뒤 다시 대화하거나, 공격하는 분기가 있어요. 보존 경로에서는 비약을 보류하고 갱신해 라야의 마지막 흔적 확인. 타니스의 보스방 대화도 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-13-8">
+            <span class="item-body"><span class="item-title"><strong>패치·타니스</strong><span class="tag">진행</span></span>
+              <span class="location">그늘성 보스방 직전 → 라이커드 전투 장소 → 흐린 강 동굴</span>
+              <span class="action">패치에게 무희의 타악기를 받고 타니스에게 보여 주기. 흐린 강 동굴로 돌아가 재전투에서 패치가 알아볼 때까지 기다려 마지막 제스처와 상점 확인. 타니스의 별도 전투는 이 대화 뒤 진행 가능.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-14">
+      <summary><span>구별된 설원·성수·모그윈 왕조</span><span class="number" aria-label="완료 항목 수" data-count>0 / 6</span></summary>
+      <div class="region-content">
+        <p class="warning">모그윈 왕조 보스 전에 백면 침입을 모두 처리하세요. 밀리센트의 최종 사인은 하나만 선택할 수 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-14-1">
+            <span class="item-body"><span class="item-title"><strong>라티나</strong><span class="tag">진행</span></span>
+              <span class="location">구별된 설원 북서쪽 기교의 폐옥</span>
+              <span class="action">커다란 백금인 앞에서 전용 상호작용으로 라티나 소환. 대화와 보상 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-14-2">
+            <span class="item-body"><span class="item-title"><strong>아나스타시아·피의 귀족</strong><span class="tag">침입·소환</span></span>
+              <span class="location">설원 얼어붙은 강 / 서쪽 절벽의 왕조 전송문 주변</span>
+              <span class="action">아나스타시아 세 번째 침입과 왕조 전송문 근처의 피의 귀족 침입을 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-14-3">
+            <span class="item-body"><span class="item-title"><strong>밀리센트</strong><span class="tag">진행</span></span>
+              <span class="location">성수 버팀목 에브레펠의 기도실 → 배수로 근처</span>
+              <span class="action">기도실 대화 후 배수로 근처 부패 웅덩이의 나무령 격파. 갱신 후 위쪽 둑의 두 사인 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-14-4">
+            <span class="item-body"><span class="item-title"><strong>밀리센트·고리</strong><span class="tag">분기</span></span>
+              <span class="location">배수로 둑 → 고리의 오두막</span>
+              <span class="action">보존 경로에서는 금색 사인으로 밀리센트를 돕고 끝난 뒤 현장에서 말 걸기. 다시 가서 침을 회수하고 고리와 대화. 다른 보상은 붉은 사인 분기에서 획득.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-14-5">
+            <span class="item-body"><span class="item-title"><strong>밀리센트의 침</strong><span class="tag">진행</span></span>
+              <span class="location">말레니아 전투 장소</span>
+              <span class="action">협력 경로에서 회수한 침을, 말레니아 격파 뒤 나타난 꽃에 사용해 별도 후속 선택에 쓰는 침을 얻기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-14-6">
+            <span class="item-body"><span class="item-title"><strong>이름 없는 백면들·백면 바레</strong><span class="tag">침입·소환</span></span>
+              <span class="location">모그윈 왕조 피의 늪 → 왕조묘 중턱</span>
+              <span class="action">늪의 백면 침입 세 번과 중턱 축복 근처 바레의 붉은 사인을 보스 전에 진행. 자신의 세계로 돌아온 뒤 바닥의 바레에게 다시 말 걸기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="base-15">
+      <summary><span>파름 아즈라와 본편 후일담</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">파름 아즈라 마지막 보스 전에 로데일과 네펠리, 콜린·금가면의 선행 단계를 확인하세요. 엔딩 장면을 다 보려면 회차 계획도 필요해요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="base-15-1">
+            <span class="item-body"><span class="item-title"><strong>멜리나·휴그·로데리카</strong><span class="tag">진행</span></span>
+              <span class="location">거인의 불가마 → 원탁</span>
+              <span class="action">불가마 행동으로 다음 구간을 연 뒤 원탁을 방문해 휴그와 로데리카의 새 대화를 번갈아 듣기. 도읍 변화 뒤에도 한 번 더 찾아가기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-2">
+            <span class="item-body"><span class="item-title"><strong>알렉산더·항아리 아이</strong><span class="tag">진행</span></span>
+              <span class="location">용성당 승강기 주변 높은 잔해 → 항아리 마을</span>
+              <span class="action">알렉산더와 대화하고 결투를 받아들이기. 받은 물건을 항아리 아이에게 건넨 뒤 갱신하고 마지막 자리 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-3">
+            <span class="item-body"><span class="item-title"><strong>베르나르</strong><span class="tag">침입·소환</span></span>
+              <span class="location">용성당 보스 안개문 / 대도량 옆 축복 북쪽 방향</span>
+              <span class="action">두 신의 살갗 보스에서 협력 사인 확인. 대도량 옆 축복에서는 마지막 보스 방향과 반대쪽 건물로 가서 베르나르 침입 보기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-4">
+            <span class="item-body"><span class="item-title"><strong>네펠리·케네스·고스토크</strong><span class="tag">진행</span></span>
+              <span class="location">고드릭 축복 → 스톰빌 왕좌</span>
+              <span class="action">네펠리에게 폭풍 매의 옛 왕을 건네고, 하이트 요새의 케네스와 대화했는지 확인. 모르고트 격파 이후 고드릭 축복에서 휴식하거나 성문 쪽에서 걸어 들어와 왕좌의 세 사람과 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-5">
+            <span class="item-body"><span class="item-title"><strong>하이타 단계의 되돌리기</strong><span class="tag">분기</span></span>
+              <span class="location">파름 아즈라의 용왕 전투 장소</span>
+              <span class="action">하이타 쪽 선택을 끝까지 본 회차에 다른 엔딩도 열어 두려면 밀리센트 협력 분기에서 얻은 미켈라의 침을 이 장소에서 사용. 사용하기 전에 보고 싶은 엔딩을 정하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-6">
+            <span class="item-body"><span class="item-title"><strong>금가면·콜린</strong><span class="tag">진행</span></span>
+              <span class="location">도읍 변화 뒤, 투기장 아래쪽과 콜린의 위치</span>
+              <span class="action">도읍 단계와 산령 대사를 마쳤다면 금가면의 마지막 자리 확인. 콜린은 분기에 따라 도읍 또는 산령에서 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-7">
+            <span class="item-body"><span class="item-title"><strong>기드온·엔야·휴그·로데리카</strong><span class="tag">대화</span></span>
+              <span class="location">큰 진행 직후 원탁과 도읍</span>
+              <span class="action">기드온에게 보고할 보스·지역 선택지가 있으면 원탁에서 미리 보고. 엔야와 원탁 사람들의 마지막 대사를 진행 단계별로 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="base-15-8">
+            <span class="item-body"><span class="item-title"><strong>네펠리·샤브리리</strong><span class="tag">침입·소환</span></span>
+              <span class="location">도읍 후반 보스 앞</span>
+              <span class="action">완료한 NPC 경로에 따라 협력 사인 확인. 네펠리는 스톰빌 왕좌 단계가 필요하고 샤브리리는 지하 최심부 선택에 따라 달라져요.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+    <details class="references"><summary>이 구간의 참고 글과 영상</summary><p>외부 공략의 제목, 썸네일과 본문에는 후반 장면이 나올 수 있어요.</p><ul><li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3301902498" target="_blank" rel="noopener noreferrer">한국어 지역별 NPC 공략</a></li><li><a href="https://eldenring.redmaw.dev/sheets/npc-walkthrough" target="_blank" rel="noopener noreferrer">본편 NPC 진행 순서와 선택 대사</a></li><li><a href="https://www.reddit.com/r/u_Cidineijonshon/comments/1qwaw4x/all_npc_interactions_in_elden_ring/" target="_blank" rel="noopener noreferrer">본편 짧은 만남·소환·침입 교차 확인</a></li><li><a href="https://www.youtube.com/watch?v=hmlsDANunPw" target="_blank" rel="noopener noreferrer">림그레이브~스톰빌 한국어 영상</a></li><li><a href="https://www.youtube.com/watch?v=kfm_8hWb4uw" target="_blank" rel="noopener noreferrer">리에니에 한국어 영상</a></li><li><a href="https://ties.tistory.com/456" target="_blank" rel="noopener noreferrer">림그레이브와 케일리드 선행 동선의 원문</a></li><li><a href="https://eldenring.wiki.gg/wiki/Melina" target="_blank" rel="noopener noreferrer">멜리나 축복 대사 목록</a></li><li><a href="https://www.eldenring.jp/newsdetail/news_detail_260827_1.html" target="_blank" rel="noopener noreferrer">빛바랜 자 팩 공식 추가 내역</a></li><li><a href="https://www.keengamer.com/articles/guides/how-to-find-knight-leontiel-and-noble-broken-mask-in-elden-ring-tarnished-edition/" target="_blank" rel="noopener noreferrer">빛바랜 자 팩 두 침입의 재현 조건</a></li></ul></details>
+  </section>
+<section id="dlc" aria-labelledby="heading-dlc">
+    <h2 id="heading-dlc">황금 나무의 그림자</h2>
+    <details class="region" id="dlc-1">
+      <summary><span>DLC 입구·묘지 평원·벨라트</span><span class="number" aria-label="완료 항목 수" data-count>0 / 7</span></summary>
+      <div class="region-content">
+        <p class="warning">그림자의 성 또는 보니 마을 동쪽 다리에 가까이 가기 전에 초반 만남과 대사를 보세요. 레다의 첫 대화는 본편에서 DLC로 들어가기 전에 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-1">
+            <span class="item-body"><span class="item-title"><strong>레다</strong><span class="tag">대화</span></span>
+              <span class="location">모그윈 왕조 보스 격파 뒤 고치 앞</span>
+              <span class="action">레다에게 말을 건 뒤 DLC 진입. 그림자의 땅 초반에 보이는 레다의 메시지도 읽기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-2">
+            <span class="item-body"><span class="item-title"><strong>프레이야·뿔인간</strong><span class="tag">대화</span></span>
+              <span class="location">세 갈래 길의 십자</span>
+              <span class="action">두 사람에게 모두 말 걸어 지도와 서로에 대한 대사 챙기기. 벨라트 안쪽의 십자도 안스바흐에게 보고할 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-3">
+            <span class="item-body"><span class="item-title"><strong>안스바흐·무아</strong><span class="tag">대화</span></span>
+              <span class="location">정문 앞의 십자</span>
+              <span class="action">둘과 대화. 안스바흐에게 처음 지도에 없는 십자를 발견할 때마다 선택지가 있는지 확인하고 보고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-4">
+            <span class="item-body"><span class="item-title"><strong>티에리에·무아</strong><span class="tag urgent">마감</span></span>
+              <span class="location">기둥언덕의 십자 ↔ 정문 앞의 십자</span>
+              <span class="action">티에리에를 만난 뒤 무아의 검은 시럽을 챙겨 티에리에에게 전달. 비약에 대해 묻고 특정 대사 선택지로 비약을 확보. 톱니산의 분기까지 보관.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-5">
+            <span class="item-body"><span class="item-title"><strong>에이곤</strong><span class="tag">대화</span></span>
+              <span class="location">기둥언덕 중턱, 용굴 쪽 길</span>
+              <span class="action">길가 음성을 따라가 첫 대사 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-6">
+            <span class="item-body"><span class="item-title"><strong>뿔인간 노파</strong><span class="tag">진행</span></span>
+              <span class="location">벨라트, 민가의 작은 제단 뒤 잠긴 창고</span>
+              <span class="action">창고 열쇠로 열고 첫 대화. 벨라트 보스를 쓰러뜨린 뒤 그 머리 장비를 착용한 상태로 재대화. 휴식 후 전갈 조림을 받아 뿔인간에게 건네고 서로에게 새 대화 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-1-7">
+            <span class="item-body"><span class="item-title"><strong>퀼라인·프레이야</strong><span class="tag">침입·소환</span></span>
+              <span class="location">벨라트 광장과 보스 안개문</span>
+              <span class="action">광장의 퀼라인 첫 침입을 확인하고, 벨라트 보스 앞 프레이야 협력 사인 보기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-2">
+      <summary><span>엔시스 성채·그림자 알터·보니 마을</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">큰 룬 관련 메시지가 떠도 대부분 이어갈 수 있어요. 초반 대사를 보고, 무아의 답은 수집벌레를 챙길 때까지 미뤄 두세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-1">
+            <span class="item-body"><span class="item-title"><strong>카리아 기사 문리델·레다·낙엽의 단</strong><span class="tag">침입·소환</span></span>
+              <span class="location">엔시스 성채와 보스 문 앞</span>
+              <span class="action">진행로에서 문리델과 조우. 보스 안개문 앞 협력 사인을 확인하고 보스 뒤 가도의 십자로 이동.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-2">
+            <span class="item-body"><span class="item-title"><strong>레다·뿔인간</strong><span class="tag">대화</span></span>
+              <span class="location">가도의 십자</span>
+              <span class="action">둘과 대화하고 뿔인간의 새 지도 받기. 레다에게 뿔인간에 대해 묻고, 전갈 조림을 아직 안 줬다면 전달.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-3">
+            <span class="item-body"><span class="item-title"><strong>낙엽의 단 데인</strong><span class="tag">진행</span></span>
+              <span class="location">가도의 십자 → 모스의 폐허</span>
+              <span class="action">수도사의 편지와 ‘겨루기 소망’을 얻고 모스의 폐허에서 데인 앞에서 제스처 사용해 결투. 승리 후 그 자리 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-4">
+            <span class="item-body"><span class="item-title"><strong>불의 기사 퀼라인</strong><span class="tag">침입·소환</span></span>
+              <span class="location">성전교회</span>
+              <span class="action">두 번째 침입을 마쳐 기도실 열쇠 얻기. 첫 침입을 건너뛰었다면 벨라트로도 가기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-5">
+            <span class="item-body"><span class="item-title"><strong>수집벌레·무아</strong><span class="tag">진행</span></span>
+              <span class="location">성전교회 북쪽 및 그림자의 땅 각지</span>
+              <span class="action">누워 있는 수집벌레를 온기석으로 치료하고 구역을 갱신한 뒤 대화. 무아에게 돌아가 제법서 7 받기. 남은 수집벌레도 말을 걸어 총 7권 확인. 정확한 위치는 부록 참고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-6">
+            <span class="item-body"><span class="item-title"><strong>레다·뿔인간·프레이야·안스바흐·티에리에</strong><span class="tag">대화</span></span>
+              <span class="location">큰 룬 메시지 뒤 각자의 십자</span>
+              <span class="action">초반 위치로 돌아가 대사를 한 바퀴 갱신. 레다의 후보 대화는 다시 말 걸어 결정까지 확인하고 뿔인간도 다시 만나기. 티에리에의 이동 대사는 재방문으로 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-7">
+            <span class="item-body"><span class="item-title"><strong>무아</strong><span class="tag">분기</span></span>
+              <span class="location">정문 앞의 십자</span>
+              <span class="action">결정을 미루는 답으로 초반 거래와 수집벌레를 마치기. 끝까지 이어갈 때는 두 확정 답 중 하나를 고르세요. 1회차는 무아가 나중에 다시 등장하는 답을 권장.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-2-8">
+            <span class="item-body"><span class="item-title"><strong>유미르·욜란</strong><span class="tag">진행</span></span>
+              <span class="location">보니 마을 지나 마누스 메테르 대교회</span>
+              <span class="action">유미르에게서 첫 유적 지도와 목걸이를 받고 기둥 옆 욜란에게 인사. 보니 마을 북쪽에서 ‘어머니여’ 제스처 확보.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-3">
+      <summary><span>그림자의 성·종자 보관고</span><span class="number" aria-label="완료 항목 수" data-count>0 / 8</span></summary>
+      <div class="region-content">
+        <p class="warning">메스메르 보스방에 처음 들어가기 전 뿔인간과 레다의 사인을 확인하세요. 보관고에서는 프레이야를 먼저 만나고, 안스바흐에게 그녀 얘기를 꺼낸 뒤 두루마리를 주세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-1">
+            <span class="item-body"><span class="item-title"><strong>레다·뿔인간</strong><span class="tag">분기</span></span>
+              <span class="location">정문 광장 위, 배 모양 화로가 놓인 길</span>
+              <span class="action">금색 사인은 뿔인간 편, 붉은 사인은 레다 편. 1회차에 뿔인간의 후속과 안스바흐 사인을 모두 노리면 두 사인을 보류하고 메스메르 전투 안에서 뿔인간을 소환하는 경로를 권장. 양쪽 사인 전투 자체는 후속 회차에.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-2">
+            <span class="item-body"><span class="item-title"><strong>안스바흐</strong><span class="tag">진행</span></span>
+              <span class="location">종자 보관고 1층 축복 근처 작은 방</span>
+              <span class="action">대화를 끝내고 안스바흐 위치를 기억해 두기. 보관고 4층 부근에서 비밀 의식의 두루마리를 주워도 아직 건네지 않기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-3">
+            <span class="item-body"><span class="item-title"><strong>프레이야·안스바흐</strong><span class="tag urgent">마감</span></span>
+              <span class="location">보관고 7층 → 1층 → 7층 → 1층</span>
+              <span class="action">7층 프레이야와 대화. 1층 안스바흐에게 프레이야 이야기를 먼저 하고 두루마리 전달. 휴식 또는 재방문으로 편지를 받아 프레이야에게 전하고, 1층에서 답까지 전달할 수 있으면 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-4">
+            <span class="item-body"><span class="item-title"><strong>레다·안스바흐</strong><span class="tag">분기</span></span>
+              <span class="location">가도의 십자 → 보관고 1층 방</span>
+              <span class="action">레다가 다음 대상으로 안스바흐를 지목하는 대화를 확인. 사인이 생겼다면 금색으로 안스바흐 돕기. 뿔인간을 금색 사인으로 도운 회차에는 이 대결이 건너뛰어질 수 있어요. 두루마리 단계까지는 계속 진행.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-5">
+            <span class="item-body"><span class="item-title"><strong>뿔인간</strong><span class="tag">침입·소환</span></span>
+              <span class="location">메스메르 전투 장소</span>
+              <span class="action">뿔인간을 살려 둔 경로에서 보스방 안의 협력 사인을 사용. 전투 뒤 축복에서 한 번 쉰 후 보스방의 뿔인간과 말하기. 소환 여부에 따라 라우프 또는 더 뒤쪽 장면이 갈려요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-6">
+            <span class="item-body"><span class="item-title"><strong>뿔인간 노파</strong><span class="tag">대화</span></span>
+              <span class="location">메스메르 전투 뒤 벨라트 창고</span>
+              <span class="action">신수의 머리를 다시 쓰고 찾아가 새 대화와 새 조림을 받은 뒤 다시 방문. 초반 조림은 미리 받아두기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-7">
+            <span class="item-body"><span class="item-title"><strong>퀼라인</strong><span class="tag">분기</span></span>
+              <span class="location">그림자의 성 교구, 잠긴 기도실</span>
+              <span class="action">열쇠로 들어가 대화. 눈동자막 두 종류 중 하나만 건네기. 어떤 보상인지 궁금할 때만 아래 분기표 열기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-3-8">
+            <span class="item-body"><span class="item-title"><strong>불의 기사 살자·채찍의 집 영혼</strong><span class="tag">침입·소환</span></span>
+              <span class="location">그림자의 성 서쪽 출구 / 보니 마을 남쪽 채찍의 집</span>
+              <span class="action">서쪽 출구의 이름 붙은 기사에게 가기. 욜란 관련 부가 대사는 채찍의 집 안 영혼과 대화한 뒤 대교회에서 확인할 수 있어요.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-4">
+      <summary><span>푸른 해안·석관의 큰 구멍</span><span class="number" aria-label="완료 항목 수" data-count>0 / 3</span></summary>
+      <div class="region-content">
+        <p class="warning">후반 봉인 장치 전에 티에리에에게 성녀 트리나의 말을 끝까지 전하세요. 네 번째 시도까지 반응을 기다리는 구간이 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-4-1">
+            <span class="item-body"><span class="item-title"><strong>티에리에</strong><span class="tag">진행</span></span>
+              <span class="location">기둥언덕의 십자 → 푸른 해안 → 석관의 큰 구멍</span>
+              <span class="action">초반 비약 단계와 큰 룬 메시지 뒤 대사를 끝내고 푸른 해안으로 간다는 말을 들으세요. 깊은 구멍의 최하부 보스 앞에선 티에리에 협력 사인도 확인 가능.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-4-2">
+            <span class="item-body"><span class="item-title"><strong>성녀 트리나·티에리에</strong><span class="tag">진행</span></span>
+              <span class="location">깊은 보라색 화원</span>
+              <span class="action">보스 뒤 티에리에와 대화. 트리나의 감로를 여러 번 마셔 처음 목소리를 들은 뒤 티에리에에게 전하기. 반응이 없거나 거절해도 말을 전하고 갱신.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-4-3">
+            <span class="item-body"><span class="item-title"><strong>티에리에</strong><span class="tag">침입·소환</span></span>
+              <span class="location">깊은 보라색 화원</span>
+              <span class="action">붉은 침입 이벤트를 진행하고 트리나의 새 대사를 들을 때까지 감로 단계 반복. 티에리에에게 마지막 말을 전한 뒤 휴식·재대화로 마무리. 엔딩 뒤 트리나도 재방문.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-5">
+      <summary><span>손가락 유적·마누스 메테르 대교회</span><span class="number" aria-label="완료 항목 수" data-count>0 / 5</span></summary>
+      <div class="region-content">
+        <p class="warning">유미르가 자리를 비운 동안 의자 아래에서 일어나는 이벤트를 챙기고, 다음 전투 전에 욜란에게 돌아가 보세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-5-1">
+            <span class="item-body"><span class="item-title"><strong>유미르·욜란</strong><span class="tag">진행</span></span>
+              <span class="location">푸른 해안 동쪽 리아의 손가락 유적 → 대교회</span>
+              <span class="action">지도에 나온 첫 유적 중앙의 종을 울리고 유미르에게 보고. 다음 지도와 새 대화를 받고 욜란에게 돌아가기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-5-2">
+            <span class="item-body"><span class="item-title"><strong>유미르·욜란</strong><span class="tag">진행</span></span>
+              <span class="location">그림자의 성 뒷문 → 숨겨진 땅의 데오 손가락 유적 → 대교회</span>
+              <span class="action">뒷문의 석상 앞에서 ‘어머니여’ 사용. 두 번째 유적의 종 뒤 유미르에게 보고하고 욜란과 다시 대화.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-5-3">
+            <span class="item-body"><span class="item-title"><strong>안나</strong><span class="tag">침입·소환</span></span>
+              <span class="location">대교회 유미르의 의자 아래</span>
+              <span class="action">휴식해 의자가 비면 조사하고 사다리 아래서 안나 침입 진행. 바로 앞 종으로 진행하기 전에 욜란에게 돌아가 이에 관한 대사 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-5-4">
+            <span class="item-body"><span class="item-title"><strong>유미르·욜란</strong><span class="tag">진행</span></span>
+              <span class="location">대교회 아래 세 번째 유적 → 대교회</span>
+              <span class="action">세 번째 종과 보스 뒤 교회로 돌아와 의자를 조사하고 이어지는 전투를 진행. 정원 묘지의 후일담과 기둥 옆 욜란 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-5-5">
+            <span class="item-body"><span class="item-title"><strong>욜란·안나</strong><span class="tag">분기</span></span>
+              <span class="location">대교회 → 라바스의 마술사탑 위층</span>
+              <span class="action">욜란에게 눈동자막 하나 선택. 영체 경로는 무녀 마을 쪽 높은 절벽에서 라바스의 탑 상층으로 떨어져 안나의 꼭두각시를 조사하는 추가 이벤트가 있어요.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-6">
+      <summary><span>톱니산·용찬의 대제단</span><span class="number" aria-label="완료 항목 수" data-count>0 / 4</span></summary>
+      <div class="region-content">
+        <p class="warning">용찬의 무녀 선택을 비교하려면 베일을 잡기 전에 결정하세요. 비약은 티에리에에게서 미리 받아 둬야 해요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-6-1">
+            <span class="item-body"><span class="item-title"><strong>고룡인</strong><span class="tag">침입·소환</span></span>
+              <span class="location">용굴 입구 전 길목 → 용굴 끝</span>
+              <span class="action">필드에서의 침입과 용굴 안 보스 조우를 차례로 보기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-6-2">
+            <span class="item-body"><span class="item-title"><strong>용찬의 무녀</strong><span class="tag">진행</span></span>
+              <span class="location">용굴 이후 용찬의 대제단</span>
+              <span class="action">무녀의 부탁을 받고 대화. 비약을 쓰는 회차라면 밤에 찾아가 사용한 뒤 다음 대화까지 보고 베일에게 가기. 일반 경로라면 비약 없이 진행.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-6-3">
+            <span class="item-body"><span class="item-title"><strong>에이곤</strong><span class="tag">진행</span></span>
+              <span class="location">톱니산 기슭, 두 용이 싸우는 곳 이후</span>
+              <span class="action">용 둘을 처리한 뒤 오르막의 에이곤에게서 손가락 받기. 베일 보스방 안 좌측의 사인을 사용해 에이곤의 소환 대사 듣기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-6-4">
+            <span class="item-body"><span class="item-title"><strong>에이곤·용찬의 무녀</strong><span class="tag">진행</span></span>
+              <span class="location">베일 격파 후 톱니산 기슭과 용찬의 대제단</span>
+              <span class="action">에이곤이 손가락을 준 곳과 대제단을 모두 재방문. 비약을 쓴 회차에는 무녀와 다시 대화하고 추가 선택지까지 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="dlc-7">
+      <summary><span>라우프의 옛 유적과 DLC 마지막 구간</span><span class="number" aria-label="완료 항목 수" data-count>0 / 4</span></summary>
+      <div class="region-content">
+        <p class="warning">꽃봉오리 교회 보스 뒤에서 봉인 나무에 상호작용하기 전에 프레이야·안스바흐·티에리에·뿔인간·무아의 진행을 확인하세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="dlc-7-1">
+            <span class="item-body"><span class="item-title"><strong>뿔인간·데인</strong><span class="tag">침입·소환</span></span>
+              <span class="location">꽃봉오리 교회로 오르는 길 / 교회 보스 안개문</span>
+              <span class="action">메스메르전 이후 뿔인간의 대사를 마친 경로에선 교회 입구 근처 침입 확인. 교회 보스 앞 데인 협력 사인도 챙기기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-7-2">
+            <span class="item-body"><span class="item-title"><strong>초반에 만난 NPC들</strong><span class="tag urgent">마감</span></span>
+              <span class="location">봉인 나무 앞</span>
+              <span class="action">프레이야 편지 전달, 안스바흐 보고·두루마리, 티에리에 마지막 전달, 뿔인간 관련 대사와 무아 결정을 확인한 뒤 상호작용.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-7-3">
+            <span class="item-body"><span class="item-title"><strong>레다·동료 NPC들</strong><span class="tag">침입·소환</span></span>
+              <span class="location">에니르 일림 정화의 방 앞</span>
+              <span class="action">레다 측 구성은 이전 선택에 따라 달라져요. 협력 조건을 채운 안스바흐와 티에리에의 사인을 사용하면 후속 대사까지 볼 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="dlc-7-4">
+            <span class="item-body"><span class="item-title"><strong>안스바흐·티에리에·레다 일행</strong><span class="tag">대화</span></span>
+              <span class="location">NPC 전투 뒤 복도·마지막 보스 앞뒤</span>
+              <span class="action">전투장과 앞으로 갈 복도에서 후속 대화. 마지막 보스 앞 협력 사인 확인. 격파 뒤 보스방과 정화의 방에서 등장했던 인물들의 흔적을 확인하고 트리나에게도 돌아가기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+    <details class="references"><summary>이 구간의 참고 글과 영상</summary><p>외부 공략의 제목, 썸네일과 본문에는 후반 장면이 나올 수 있어요.</p><ul><li><a href="https://eldenring.redmaw.dev/sheets/dlc-walkthrough" target="_blank" rel="noopener noreferrer">DLC 상세 순서와 놓치기 쉬운 단계</a></li><li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3301902498" target="_blank" rel="noopener noreferrer">DLC 지역별 한국어 공략</a></li><li><a href="https://www.youtube.com/watch?v=ibmJYG2dxEU" target="_blank" rel="noopener noreferrer">DLC NPC별 한국어 챕터 영상</a></li><li><a href="https://www.youtube.com/watch?v=wNAZcnpdJRA&amp;t=138s" target="_blank" rel="noopener noreferrer">안스바흐·프레이야 편지 순서 영상</a></li><li><a href="https://tarnishedsaga.com/quests/ledas-questline/" target="_blank" rel="noopener noreferrer">레다·뿔인간·안스바흐 분기 조건</a></li><li><a href="https://www.powerpyx.com/elden-ring-shadow-of-the-erdtree-dlc-all-side-quests/" target="_blank" rel="noopener noreferrer">DLC 전체 주요 NPC 퀘스트와 뿔인간 사인 보류 경로</a></li></ul></details>
+  </section>
+<section id="extras" aria-labelledby="heading-extras">
+    <h2 id="heading-extras">부록</h2>
+    <details class="region" id="extras-1">
+      <summary><span>사근과 그랭의 중간 대사</span><span class="number" aria-label="완료 항목 수" data-count>0 / 4</span></summary>
+      <div class="region-content">
+        <p class="warning">4개를 준 뒤 지역을 갱신하고 그랭이 먼저 덤비면, 어느 정도 피해만 입혀 진정시키고 다시 말을 거세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="extras-1-1">
+            <span class="item-body"><span class="item-title"><strong>림그레이브 2개</strong><span class="tag">진행</span></span>
+              <span class="location">마중물 마을 / 죽음에 닿은 지하 묘지</span>
+              <span class="action">타비아의 배와 묘지 보스 뒤 상자에서 각각 얻기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-1-2">
+            <span class="item-body"><span class="item-title"><strong>리에니에 2개</strong><span class="tag">진행</span></span>
+              <span class="location">카리아 서원 남쪽 / 검은 칼날의 지하 묘지</span>
+              <span class="action">필드 타비아의 배와 묘지의 일반 보스 뒤 상자에서 각각 얻기. 숨은 자객의 각인은 로지에르용.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-1-3">
+            <span class="item-body"><span class="item-title"><strong>알터·겔미어 2개</strong><span class="tag">진행</span></span>
+              <span class="location">윈덤 폐허 / 겔미어 영웅 묘지</span>
+              <span class="action">윈덤의 타비아의 배와 영웅 묘지 보스 뒤 상자에서 각각 얻기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-1-4">
+            <span class="item-body"><span class="item-title"><strong>산령·비밀 통로 3개</strong><span class="tag">진행</span></span>
+              <span class="location">소르 성채 남쪽 능선 / 거인 산령 지하 묘지 / 성수로 가는 비밀 통로</span>
+              <span class="action">능선의 타비아의 배와 두 던전의 보스 뒤 상자에서 얻기. 사근 9개를 전달하고 그랭의 마지막 대화까지 듣기.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="extras-2">
+      <summary><span>패치의 추가 반응과 고스토크의 훔쳐보기</span><span class="number" aria-label="완료 항목 수" data-count>0 / 2</span></summary>
+      <div class="region-content">
+        <p class="warning">선택 대사와 제스처가 목표일 때만 펼치세요. 패치와 고스토크를 살려 두면 각각 후속 이벤트가 더 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="extras-2-1">
+            <span class="item-body"><span class="item-title"><strong>패치</strong><span class="tag">대화</span></span>
+              <span class="location">흐린 강 동굴 첫 대치 / 상점 개방 뒤</span>
+              <span class="action">첫 대치에서 항복 대사 뒤 손을 멈추고 대화. 추가 상자를 열고 돌아와 진정하라는 제스처를 챙기기. 추가 반응까지 볼 거라면 동굴에서 패치를 약하게 몇 번 쳐 적대시킨 뒤 체력이 낮아졌을 때 나오는 제스처와 대사에 맞춰 항복하기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-2-2">
+            <span class="item-body"><span class="item-title"><strong>고스토크</strong><span class="tag">대화</span></span>
+              <span class="location">스톰빌 내부의 훔쳐보기 위치들</span>
+              <span class="action">잠기는 방을 지난 뒤 사다리 위 문턱을 넘었다가 아래로 돌아가는 지점, 성벽 탑 이후 옥상과 예배당 일대를 확인. 첫 발각에서만 줄 수 있는 아이템이 있어요. 보스를 잡기 전에 놓친 위치는 아래 참고 영상에서 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="extras-3">
+      <summary><span>수집벌레의 제법서 7권</span><span class="number" aria-label="완료 항목 수" data-count>0 / 3</span></summary>
+      <div class="region-content">
+        <p class="warning">적대시키면 무아의 반응과 제법서 입수에 영향을 줘요. 무아의 확정 답을 주기 전에 먼저 챙기세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="extras-3-1">
+            <span class="item-body"><span class="item-title"><strong>수집벌레 1–3</strong><span class="tag">진행</span></span>
+              <span class="location">묘지 평원 / 그림자 알터 / 푸른 해안 접근로</span>
+              <span class="action">위치는 아래 수집벌레 지도에서 확인. 살아 있는 개체에 다가가 대화하면 제법서를 받을 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-3-2">
+            <span class="item-body"><span class="item-title"><strong>수집벌레 4·무아 7</strong><span class="tag">진행</span></span>
+              <span class="location">성전교회 북쪽 / 정문 앞의 십자</span>
+              <span class="action">쓰러진 수집벌레에 온기석을 사용하고 갱신한 뒤 대화해 4번. 그 뒤 무아에게서 7번.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-3-3">
+            <span class="item-body"><span class="item-title"><strong>수집벌레 5–6</strong><span class="tag">진행</span></span>
+              <span class="location">모스의 폐허 북쪽 / 그림자의 성 교구 진입로 주변</span>
+              <span class="action">아래 지도에서 지형과 접근로를 확인. 무아에게 답하기 전 1–7번이 있는지 소지품 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="extras-4">
+      <summary><span>지나치기 쉬운 짧은 NPC 만남</span><span class="number" aria-label="완료 항목 수" data-count>0 / 5</span></summary>
+      <div class="region-content">
+        <p class="warning">본문에 있는 퀘스트 진행 외에, 단독 제스처·소환·이름 있는 침입도 조금 더 챙기고 싶을 때 보세요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="extras-4-1">
+            <span class="item-body"><span class="item-title"><strong>손가락 읽는 노파들</strong><span class="tag">대화</span></span>
+              <span class="location">스톰빌 신수탑 교량 근처 / 리에니에 다리 / 알터 고원 끊어진 다리 / 도읍 등</span>
+              <span class="action">길가에서 말을 거는 노파에게 대화. 각자 다른 대사가 있고 아래 전체 NPC 지도에서 위치를 확인할 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-4-2">
+            <span class="item-body"><span class="item-title"><strong>상인들의 첫 대화</strong><span class="tag">대화</span></span>
+              <span class="location">림그레이브부터 설원까지</span>
+              <span class="action">지역별 상인과 인사하고 대화 메뉴를 확인. 일반 상인의 물품 위치도 아래 상인 지도를 참고.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-4-3">
+            <span class="item-body"><span class="item-title"><strong>트라고스·밀리센트·D의 동생</strong><span class="tag">침입·소환</span></span>
+              <span class="location">옛 유적 절벽 보스 / 알터의 일부 보스 / 시프라 수도교 쌍둥이 보스</span>
+              <span class="action">의뢰 전 트라고스를 불러 제스처 챙기기. 밀리센트의 의수 단계와 D의 갑옷을 마치면 해당 보스 앞 사인도 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-4-4">
+            <span class="item-body"><span class="item-title"><strong>장로 이오리</strong><span class="tag">침입·소환</span></span>
+              <span class="location">DLC 나락 입구</span>
+              <span class="action">나락으로 향하는 어둠을 비추는 지하 묘지 끝에서 이름 있는 인물전을 확인.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="extras-4-5">
+            <span class="item-body"><span class="item-title"><strong>이름 없는 영묘의 전사들</strong><span class="tag">침입·소환</span></span>
+              <span class="location">DLC 이름 없는 영묘 4곳</span>
+              <span class="action">묘지 평원 서쪽, 그림자 알터 북쪽, 푸른 해안 앞바다 서쪽 섬, 라우프 기슭 동쪽으로 각각 접근. 단독 인물전까지 챙길 때 확인.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+    <details class="references"><summary>이 구간의 참고 글과 영상</summary><p>외부 공략의 제목, 썸네일과 본문에는 후반 장면이 나올 수 있어요.</p><ul><li><a href="https://eldenring.wiki.gg/wiki/Forager_Brood" target="_blank" rel="noopener noreferrer">수집벌레 제법서별 위치</a></li><li><a href="https://eldenring.redmaw.dev/sheets/merchants" target="_blank" rel="noopener noreferrer">상인 위치</a></li><li><a href="https://lootmap.gg/ko/elden-ring/guides/npc-quest-locations/" target="_blank" rel="noopener noreferrer">NPC 지도와 보조 위치</a></li><li><a href="https://www.youtube.com/watch?v=irq_6L_0a8Q" target="_blank" rel="noopener noreferrer">고스토크의 모든 위치 영상</a></li><li><a href="https://www.youtube.com/watch?v=nTVxkcRnRTQ" target="_blank" rel="noopener noreferrer">본편 NPC 침입 영상</a></li></ul></details>
+  </section>
+<section id="branches" aria-labelledby="heading-branches">
+    <h2 id="heading-branches">선택 분기</h2>
+    <details class="region" id="branches-1">
+      <summary><span>본편 주요 분기 6곳</span><span class="number" aria-label="완료 항목 수" data-count>0 / 6</span></summary>
+      <div class="region-content">
+        <p class="warning">NPC의 이후 장면 또는 고유 보상이 달라지는 큰 선택을 셌어요. 붉은 사인과 금색 사인은 같은 회차에 하나만 진행할 수 있어요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-1">
+            <span class="item-body"><span class="item-title"><strong>셀브스의 정약</strong><span class="tag">분기</span></span>
+              <span class="location">셀브스의 탑 → 기드온 / 네펠리 / 대변 먹는 자</span>
+              <span class="action">① 기드온에게 맡기면 네펠리와 대변 먹는 자 후속을 모두 진행 가능. ② 네펠리에게 주면 네펠리 인형 분기, 스톰빌 왕좌 연계 차단. ③ 대변 먹는 자에게 주면 그 인형 분기, 그 NPC의 일반 마무리 차단. 세 장면을 모두 볼 계획이면 정약만으로 3회차분.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-2">
+            <span class="item-body"><span class="item-title"><strong>보크</strong><span class="tag">분기</span></span>
+              <span class="location">도읍 동쪽 성벽</span>
+              <span class="action">① ‘너는 아름다워’를 쓰고 대화. ② 물방울 유생을 주고 레아 루카리아 대서고에서 후속 확인. 1회차는 ① 권장.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-3">
+            <span class="item-body"><span class="item-title"><strong>불량배</strong><span class="tag">분기</span></span>
+              <span class="location">새우 삶는 오두막과 도읍 해자</span>
+              <span class="action">① 새우를 사서 해자로 이동시키면 대변 먹는 자와 엮인 대사와 후속이 생김. ② 해자 사건을 끝낼 때까지 새우를 사는 일을 미루면 그 장면을 피해 상인을 살릴 수 있음.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-4">
+            <span class="item-body"><span class="item-title"><strong>셀렌·제렌</strong><span class="tag">분기</span></span>
+              <span class="location">레아 루카리아 대서고</span>
+              <span class="action">① 금색 사인으로 셀렌, ② 붉은 사인으로 제렌. 승리 뒤 대화와 보상이 다름. 1회차는 추가 후일담이 있는 셀렌 쪽 권장.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-5">
+            <span class="item-body"><span class="item-title"><strong>라야</strong><span class="tag">분기</span></span>
+              <span class="location">화산관 숨은 방</span>
+              <span class="action">① 타니스의 비약을 주기. ② 준다는 결정을 미루고 라이커드 후 재방문. ③ 라야의 요청대로 공격. 세 경로의 대화와 마지막 상태가 달라요. 1회차는 ② 권장.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-1-6">
+            <span class="item-body"><span class="item-title"><strong>밀리센트</strong><span class="tag">분기</span></span>
+              <span class="location">에브레펠 배수로 위 둑</span>
+              <span class="action">① 금색 사인으로 돕기. 후속 대화와 침 단계가 이어져요. ② 붉은 사인으로 맞서기. 고유 보상이 달라요. 1회차는 ① 권장.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="branches-2">
+      <summary><span>황금 나무의 그림자 주요 분기 6곳</span><span class="number" aria-label="완료 항목 수" data-count>0 / 6</span></summary>
+      <div class="region-content">
+        <p class="warning">뿔인간과 안스바흐 사인은 연결돼 있어요. 뿔인간 편을 직접 들면 안스바흐와 레다의 별도 대결이 건너뛰어져요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-1">
+            <span class="item-body"><span class="item-title"><strong>레다·뿔인간</strong><span class="tag">분기</span></span>
+              <span class="location">그림자의 성 배 모양 화로 길</span>
+              <span class="action">① 금색 사인으로 뿔인간을 돕기. ② 붉은 사인으로 레다를 돕기. ③ 사인을 건너뛰고 메스메르에서 뿔인간을 부르거나, 부르지 않는 경로. 두 보스 이후 위치와 나중 대결의 구성이 달라져요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-2">
+            <span class="item-body"><span class="item-title"><strong>레다·안스바흐</strong><span class="tag">분기</span></span>
+              <span class="location">종자 보관고 1층</span>
+              <span class="action">① 금색으로 안스바흐를 돕고 후속 소환 유지. ② 붉은색으로 레다를 도와 별도 보상 확인. ③ 사인을 건너뛰어도 두루마리와 편지 단계는 진행할 수 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-3">
+            <span class="item-body"><span class="item-title"><strong>무아</strong><span class="tag">분기</span></span>
+              <span class="location">정문 앞의 십자</span>
+              <span class="action">① ‘잊어버려라’에 해당하는 답은 후반 재등장. ② 계속 슬퍼하라는 답은 성전교회 북쪽에서 다른 후속. ③ ‘모르겠다’는 결정을 보류해 거래와 채집에 유리해요. 수집벌레를 공격해 무아를 적대시키는 별도 반응도 있어요.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-4">
+            <span class="item-body"><span class="item-title"><strong>퀼라인</strong><span class="tag">분기</span></span>
+              <span class="location">그림자의 성 기도실</span>
+              <span class="action">① 축복의 눈동자막은 영체. ② 어둠의 눈동자막은 무기. 회차당 한 가지.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-5">
+            <span class="item-body"><span class="item-title"><strong>욜란</strong><span class="tag">분기</span></span>
+              <span class="location">마누스 메테르 대교회</span>
+              <span class="action">① 축복의 눈동자막은 영체와 라바스의 탑 후속. ② 어둠의 눈동자막은 무기. 회차당 한 가지.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-2-6">
+            <span class="item-body"><span class="item-title"><strong>용찬의 무녀</strong><span class="tag">분기</span></span>
+              <span class="location">용찬의 대제단</span>
+              <span class="action">① 비약 없이 베일을 진행하면 무녀 자리에서 한 종류의 보상과 흔적 확인. ② 베일 전에 밤에 티에리에의 비약을 사용하면 귀환 대화와 다른 보상. 추가 대사를 우선하면 ② 권장.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+<details class="region" id="branches-3">
+      <summary><span>회차를 짜는 방법</span><span class="number" aria-label="완료 항목 수" data-count>0 / 5</span></summary>
+      <div class="region-content">
+        <p class="warning">아래 조합은 대사와 후속을 많이 보는 예시예요. 모든 엔딩 장면, 즉시 적대, 중간 대사의 다른 답까지 수집하면 추가 분기가 생겨요.</p>
+        <ul class="items">
+          <li><label class="item">
+            <input type="checkbox" id="branches-3-1">
+            <span class="item-body"><span class="item-title"><strong>1회차에서 후속 우선</strong><span class="tag">분기</span></span>
+              <span class="location">본편과 DLC</span>
+              <span class="action">본편은 기드온에게 정약, 보크의 말 제스처, 불량배의 해자, 셀렌, 라야 비약 보류, 밀리센트 돕기. DLC는 뿔인간 사인 보류 후 보스전에서 소환, 안스바흐 편, 무아 후반 재등장, 퀼라인·욜란 영체, 무녀 비약 사용.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-3-2">
+            <span class="item-body"><span class="item-title"><strong>2회차에서 반대쪽</strong><span class="tag">분기</span></span>
+              <span class="location">본편과 DLC</span>
+              <span class="action">본편은 대변 먹는 자에게 정약, 보크의 물방울 유생, 불량배 생존, 제렌, 라야에게 비약, 밀리센트 반대편. DLC는 레다 편으로 두 대결을 차례로, 무아의 다른 답, 퀼라인·욜란 무기, 무녀 비약 없이.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-3-3">
+            <span class="item-body"><span class="item-title"><strong>3회차에서 남은 선택</strong><span class="tag">분기</span></span>
+              <span class="location">본편과 DLC</span>
+              <span class="action">본편은 네펠리에게 정약, 라야의 세 번째 선택. DLC는 뿔인간 사인에서 직접 돕기. 후반에 뿔인간이 다른 위치에 등장하는 장면을 보고 싶다면 보스전 소환 여부도 바꾸기.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-3-4">
+            <span class="item-body"><span class="item-title"><strong>하이타·멜리나·샤브리리</strong><span class="tag">분기</span></span>
+              <span class="location">본편 엔딩과 별도 대사</span>
+              <span class="action">지하 최심부 선택의 시점을 불가마 전후로 바꾸면 멜리나와 샤브리리의 등장·대사가 달라져요. 하이타의 후속을 본 뒤 다른 엔딩을 선택하려는 회차에는 밀리센트 협력 분기의 침을 준비.</span>
+            </span>
+          </label></li>
+          <li><label class="item">
+            <input type="checkbox" id="branches-3-5">
+            <span class="item-body"><span class="item-title"><strong>그 밖의 대사 변형</strong><span class="tag">분기</span></span>
+              <span class="location">본편과 DLC</span>
+              <span class="action">패치 항복 수락 여부, D 동생에게 갑옷 전달 여부, 셀브스의 호박색 정약을 라니에게 제안하는 장면, 타니스의 별도 전투, 콜린에게 비약 제안, 프레이야에게 편지를 전하는 여부도 후속에 영향을 줄 수 있어요. 셀브스의 라니 실험은 맹세의 교회 속죄가 필요해질 수 있으니 다른 회차에서 시도.</span>
+            </span>
+          </label></li>
+        </ul>
+      </div>
+    </details>
+    <details class="references"><summary>이 구간의 참고 글과 영상</summary><p>외부 공략의 제목, 썸네일과 본문에는 후반 장면이 나올 수 있어요.</p><ul><li><a href="https://www.reddit.com/r/Eldenring/comments/1qc7fzd/guide_all_npc_quests_v5_shadow_of_the_erdtree/" target="_blank" rel="noopener noreferrer">본편과 DLC 전체 분기 흐름도</a></li><li><a href="https://eldenring.redmaw.dev/sheets/npc-walkthrough" target="_blank" rel="noopener noreferrer">본편 분기와 보상</a></li><li><a href="https://eldenring.redmaw.dev/sheets/dlc-walkthrough" target="_blank" rel="noopener noreferrer">DLC 분기와 보상</a></li></ul></details>
+  </section>
+</main>
+<script>
+  const prefix = 'elden-ring-npc-events-v1';
+  const journey = document.querySelector('#journey');
+  const notice = document.querySelector('#save-notice');
+  const regions = Array.from(document.querySelectorAll('.region'), element => ({
+    element,
+    count: element.querySelector('[data-count]'),
+    checks: Array.from(element.querySelectorAll('input[type="checkbox"]'))
+  }));
+  const memory = new Map();
+
+  function read(key) {
+    if (memory.has(key)) return memory.get(key);
+    try { return localStorage.getItem(key); }
+    catch { notice.textContent = '이 브라우저에서는 파일을 열어 둔 동안만 체크가 유지돼요.'; return null; }
+  }
+
+  function write(key, value) {
+    memory.set(key, value);
+    try { localStorage.setItem(key, value); }
+    catch { notice.textContent = '이 브라우저에서는 파일을 열어 둔 동안만 체크가 유지돼요.'; }
+  }
+
+  function refreshCount(region) {
+    const complete = region.checks.filter(check => check.checked).length;
+    region.count.textContent = complete + ' / ' + region.checks.length;
+  }
+
+  function loadJourney() {
+    const key = prefix + '-journey-' + journey.value;
+    let saved = {};
+    try { saved = JSON.parse(read(key) || '{}') || {}; } catch { saved = {}; }
+    for (const region of regions) {
+      for (const check of region.checks) check.checked = saved[check.id] === true;
+      refreshCount(region);
+    }
+  }
+
+  const lastJourney = read(prefix + '-selected');
+  if (['1', '2', '3', '4'].includes(lastJourney)) journey.value = lastJourney;
+  loadJourney();
+
+  journey.addEventListener('change', () => {
+    write(prefix + '-selected', journey.value);
+    loadJourney();
+  });
+
+  for (const region of regions) {
+    region.element.addEventListener('change', () => {
+      refreshCount(region);
+      const completed = {};
+      for (const entry of regions) {
+        for (const check of entry.checks) {
+          if (check.checked) completed[check.id] = true;
+        }
+      }
+      write(prefix + '-journey-' + journey.value, JSON.stringify(completed));
+    });
+  }
+</script>
+</body>
+</html>
